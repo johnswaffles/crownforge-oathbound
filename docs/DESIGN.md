@@ -23,7 +23,7 @@ Resolve caps at 100. Successful auto-attacks generate 10. Direct hits received g
 - Level 2 Shield Bash: free; 60% weapon hit; interrupt, 3s special delay; 12s cooldown; global cooldown.
 - Level 3 Sweeping Steel: 35 Resolve; 110% weapon hit to three frontal nearby enemies; 8s cooldown; global cooldown.
 - Level 4 Last Stand: free; heals 25% Health over 5s; 60s cooldown; off global cooldown.
-- Healing draught: heals 40% Health; 25s cooldown; consumable. Start with three. Buy for five coins at Tovin.
+- Healing draught: heals 40% Health; 25s cooldown; consumable. Start with three. Resting at camp or returning after defeat replenishes your supply to at least three. Buy extras for five coins at Tovin.
 
 ## Progression
 

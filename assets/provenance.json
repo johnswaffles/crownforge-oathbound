@@ -1,0 +1,9 @@
+{
+  "project": "Crownforge: Oathbound",
+  "version": "20260921-oathbound-2",
+  "oathbound-keyart.png": {"origin":"Original artwork generated for this project with the built-in image generation tool","brief":"A teal-cloaked sword-and-shield Crownwarden overlooking a small woodland watch camp, stream, bridge and grizzly bear, with golden dawn light and no lettering."},
+  "crownforge-grizzly-reference.png": {"origin":"User-owned Crownforge asset copied unchanged from crownforge-bear-fury-preview/assets/crownforge-grizzly-v1.png","sha256":"de0a059b7f71f7c6785b208b6f175ad021c618a6a67d5b4e9e0e21b0d99dbfc3"},
+  "cavernous-wonder.mp3": {"origin":"User-owned Crownforge soundtrack copied unchanged from crownforge-bear-fury-preview/assets/cavernous-wonder.mp3","sha256":"f32f998e52be6c96cc1c299f85c596b12795c35fe8deb0ae89033a11e6dd1170"},
+  "3d-world-and-fighter": {"origin":"Original editable geometry and motion authored in src/world.js for Oathbound"},
+  "vendor":"Three.js 0.174.0; MIT license in vendor/THREE-LICENSE.txt"
+}

@@ -1,12 +1,157 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10282c"><meta name="description" content="Take the first watch. An original single-player Crownforge adventure."><title>Crownforge: Oathbound</title><link rel="stylesheet" href="style.css"></head><body>
-<canvas id="world" aria-label="Brackenwatch Hollow 3D game world" tabindex="0"></canvas><div id="vignette"></div>
-<section id="title-screen"><div class="title-shade"></div><div class="title-copy"><div class="eyebrow">AN ADVENTURE IN THE WORLD OF CROWNFORGE</div><div class="crest">♜</div><h1>Crownforge<span>Oathbound</span></h1><p class="tagline">A kingdom is built by many.<br>A promise is kept by one.</p><div class="title-rule"></div><h2>The first watch begins in Brackenwatch Hollow.</h2><p class="intro">One cottage has gone quiet. Take up your sword, follow the woodland trail, and bring its people home.</p><button id="begin" class="primary">Begin your watch <span>→</span></button><button id="continue" class="secondary" hidden>Continue your adventure</button><small>Single player · Sword & shield · A small, complete adventure</small><div id="load-status" role="status">Preparing Brackenwatch…</div></div><div class="chapter-label">CHAPTER I <span>THE MISSING CHIMNEY</span></div></section>
-<div id="hud" hidden><header><div class="brand">CROWNFORGE <b>OATHBOUND</b></div><div class="location"><span>THE CROWNLANDS</span><strong id="zone-name">Brackenwatch Hollow</strong></div><nav><button id="character-open" title="Character & equipment (C)">Character <kbd>C</kbd></button><button id="journal-open" title="Journal (J)">Journal <kbd>J</kbd></button><button id="settings-open" title="Help and settings">☰</button></nav></header>
-<div class="unitframe player-frame"><div class="portrait">♜<b id="level">1</b></div><div class="unit-info"><div class="unit-title">The Oathguard <span>FIGHTER</span></div><div class="bar health"><i id="hp-bar"></i><span id="hp-text"></span></div><div class="bar resolve"><i id="resolve-bar"></i><span id="resolve-text"></span></div><div id="buffs"></div></div></div>
-<div class="unitframe target-frame" id="target-frame" hidden><div class="unit-info"><div class="unit-title" id="target-name"></div><div class="bar enemy"><i id="target-bar"></i><span id="target-hp"></span></div><div class="bar cast" id="cast-wrap" hidden><i id="cast-bar"></i><span id="cast-text"></span></div></div></div>
-<aside id="quest-tracker"><div class="eyebrow">YOUR FIRST WATCH</div><h2 id="quest-name"></h2><p id="quest-text"></p><div id="quest-progress"></div><div class="quest-divider"></div><small id="quest-reward"></small><button id="track" class="text-button">Show the way <span>◇</span></button></aside>
-<canvas id="minimap" width="180" height="180" aria-label="Map of Brackenwatch Hollow"></canvas><div id="map-label">BRACKENWATCH HOLLOW</div><div id="notifications" aria-live="polite"></div><div id="world-labels"></div><div id="combat-feedback" aria-live="polite"></div><button id="interact" hidden><kbd>E</kbd><span></span></button><div id="combat-hint"></div>
-<footer><div class="action-tray"><button id="auto" title="Toggle auto-attack (F)"><kbd>F</kbd><span class="ability-icon">⚔</span><small>Attack</small></button><div id="abilities"></div><button id="potion" title="Restore 40% Health. 25-second cooldown (Q)"><kbd>Q</kbd><span class="ability-icon potion">♜</span><small id="potion-count">3 draughts</small><em></em></button></div><div class="xp"><i id="xp-bar"></i></div><div class="controls-hint">WASD move <span>·</span> Drag to orbit <span>·</span> Scroll to zoom <span>·</span> Tab target <span>·</span> E interact <span>·</span> Space jump</div></footer><div id="save-status">Progress saves automatically</div></div>
-<section id="panel" class="modal" hidden aria-modal="true" role="dialog"><div class="panel-inner"><button id="close-panel" class="close" aria-label="Close panel">×</button><div id="panel-content"></div></div></section>
-<section id="death" class="modal" hidden role="dialog" aria-modal="true"><div class="death-inner"><div class="eyebrow">THE WATCH IS NOT OVER</div><h2>Rise again, Oathguard.</h2><p>Your progress and equipment are safe. Recover at the watch camp and return when you’re ready.</p><button id="respawn" class="primary">Return to the hearth</button></div></section>
-<script type="module" src="src/main.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#10282c" />
+    <meta
+      name="description"
+      content="Take the first watch. An original single-player Crownforge adventure."
+    />
+    <meta name="oathbound-build" content="20260921-oathbound-2" />
+    <title>Crownforge: Oathbound</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas
+      id="world"
+      aria-label="Brackenwatch Hollow 3D game world"
+      tabindex="0"
+    ></canvas>
+    <div id="vignette"></div>
+    <section id="title-screen">
+      <div class="title-shade"></div>
+      <div class="title-copy">
+        <div class="eyebrow">AN ADVENTURE IN THE WORLD OF CROWNFORGE</div>
+        <div class="crest">♜</div>
+        <h1>Crownforge<span>Oathbound</span></h1>
+        <p class="tagline">
+          A kingdom is built by many.<br />A promise is kept by one.
+        </p>
+        <div class="title-rule"></div>
+        <h2>The first watch begins in Brackenwatch Hollow.</h2>
+        <p class="intro">
+          One cottage has gone quiet. Take up your sword, follow the woodland
+          trail, and bring its people home.
+        </p>
+        <button id="begin" class="primary" disabled>
+          Begin your watch <span>→</span></button
+        ><button id="continue" class="secondary" hidden>
+          Continue your adventure</button
+        ><small
+          >Single player · Sword & shield · A small, complete adventure</small
+        >
+        <div id="load-status" role="status">Preparing Brackenwatch…</div>
+      </div>
+      <div class="chapter-label">
+        CHAPTER I <span>THE MISSING CHIMNEY</span>
+      </div>
+    </section>
+    <div id="hud" hidden>
+      <header>
+        <div class="brand">CROWNFORGE <b>OATHBOUND</b></div>
+        <div class="location">
+          <span>THE CROWNLANDS</span
+          ><strong id="zone-name">Brackenwatch Hollow</strong>
+        </div>
+        <nav>
+          <button id="character-open" title="Character & equipment (C)">
+            Character <kbd>C</kbd></button
+          ><button id="journal-open" title="Journal (J)">
+            Journal <kbd>J</kbd></button
+          ><button id="settings-open" title="Help and settings">☰</button>
+        </nav>
+      </header>
+      <div class="unitframe player-frame">
+        <div class="portrait">♜<b id="level">1</b></div>
+        <div class="unit-info">
+          <div class="unit-title">The Oathguard <span>FIGHTER</span></div>
+          <div class="bar health">
+            <i id="hp-bar"></i><span id="hp-text"></span>
+          </div>
+          <div class="bar resolve">
+            <i id="resolve-bar"></i><span id="resolve-text"></span>
+          </div>
+          <div id="buffs"></div>
+        </div>
+      </div>
+      <div class="unitframe target-frame" id="target-frame" hidden>
+        <div class="unit-info">
+          <div class="unit-title" id="target-name"></div>
+          <div class="bar enemy">
+            <i id="target-bar"></i><span id="target-hp"></span>
+          </div>
+          <div class="bar cast" id="cast-wrap" hidden>
+            <i id="cast-bar"></i><span id="cast-text"></span>
+          </div>
+        </div>
+      </div>
+      <aside id="quest-tracker">
+        <div class="eyebrow">YOUR FIRST WATCH</div>
+        <h2 id="quest-name"></h2>
+        <p id="quest-text"></p>
+        <div id="quest-progress"></div>
+        <div class="quest-divider"></div>
+        <small id="quest-reward"></small
+        ><button id="track" class="text-button">
+          Show the way <span>◇</span>
+        </button>
+      </aside>
+      <canvas
+        id="minimap"
+        width="180"
+        height="180"
+        aria-label="Map of Brackenwatch Hollow"
+      ></canvas>
+      <div id="map-label">BRACKENWATCH HOLLOW</div>
+      <div id="notifications" aria-live="polite"></div>
+      <div id="world-labels"></div>
+      <div id="combat-feedback" aria-live="polite"></div>
+      <button id="interact" hidden><kbd>E</kbd><span></span></button>
+      <div id="combat-hint"></div>
+      <footer>
+        <div class="action-tray">
+          <button id="auto" title="Toggle auto-attack (F)">
+            <kbd>F</kbd><span class="ability-icon">⚔</span
+            ><small>Attack</small>
+          </button>
+          <div id="abilities"></div>
+          <button
+            id="potion"
+            title="Restore 40% Health. 25-second cooldown (Q)"
+          >
+            <kbd>Q</kbd><span class="ability-icon potion">♜</span
+            ><small id="potion-count">3 draughts</small><em></em>
+          </button>
+        </div>
+        <div class="xp"><i id="xp-bar"></i></div>
+        <div class="controls-hint">
+          WASD move <span>·</span> Drag to orbit <span>·</span> Scroll to zoom
+          <span>·</span> Tab target <span>·</span> E interact
+          <span>·</span> Space jump
+        </div>
+      </footer>
+      <div id="save-status">Progress saves automatically</div>
+    </div>
+    <section id="panel" class="modal" hidden aria-modal="true" role="dialog">
+      <div class="panel-inner">
+        <button id="close-panel" class="close" aria-label="Close panel">
+          ×
+        </button>
+        <div id="panel-content"></div>
+      </div>
+    </section>
+    <section id="death" class="modal" hidden role="dialog" aria-modal="true">
+      <div class="death-inner">
+        <div class="eyebrow">THE WATCH IS NOT OVER</div>
+        <h2>Rise again, Oathguard.</h2>
+        <p>
+          Your progress and equipment are safe. Recover at the watch camp and
+          return when you’re ready.
+        </p>
+        <button id="respawn" class="primary">Return to the hearth</button>
+      </div>
+    </section>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
