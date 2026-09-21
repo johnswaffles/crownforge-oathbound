@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: crownforge-oathbound
+    runtime: static
+    branch: codex/oathbound-initial
+    buildCommand: echo Oathbound-static-ready
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /src/*
+        name: Cache-Control
+        value: no-cache
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
