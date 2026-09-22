@@ -1,3 +1,7 @@
+import {buildWalkSurface} from './ground-surface.js';
+import {animateOathguard} from './oathguard-v037.js';
+import {installStructures} from './structures-v003.js';
+import {installWatchcamp} from './art-pass.js';
 import * as T from "../vendor/three.module.js";
 export const LANDMARKS = {
   mara: { x: -2, z: 9, name: "Warden Mara Venn" },
@@ -177,6 +181,7 @@ export function fighter({ cloth = "#28656a", armed = true } = {}) {
   return root;
 }
 export function animateFighter(model, time, speed, attack = 0, guard = false) {
+  if(model.userData.oathguard){animateOathguard(model,time,speed,attack,guard);return;}
   const d = model.userData,
     phase = time * 9;
   d.legs.forEach(
@@ -262,7 +267,7 @@ function path(scene, pts, width) {
     map: terrainTexture(),
   });
   m.map.repeat.set(1, 1);
-  mesh(g, m, scene);
+  mesh(g, m, scene).userData.walkSurface=true;
 }
 export function buildWorld(scene) {
   let randomSeed = 751;
@@ -273,11 +278,11 @@ export function buildWorld(scene) {
   let colliders = [],
     props = [],
     smoke = [];
-  scene.background = new T.Color("#a9beb5");
-  scene.fog = new T.FogExp2("#a2b9ad", 0.012);
-  scene.add(new T.HemisphereLight("#d2e7df", "#485444", 2.0));
-  let sun = new T.DirectionalLight("#ffe0a6", 3.1);
-  sun.position.set(-25, 40, 15);
+  scene.background = new T.Color("#bdc7bd");
+  scene.fog = new T.FogExp2("#b0c0b6", 0.009);
+  scene.add(new T.HemisphereLight("#d8e3e9", "#727657", 2.5));
+  let sun = new T.DirectionalLight("#ffe4b2", 3.4);
+  sun.position.set(18, 45, 30);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, {
@@ -292,7 +297,7 @@ export function buildWorld(scene) {
   sun.shadow.normalBias = 0.05;
   scene.add(sun);
   scene.add(sun.target);
-  let ground = new T.PlaneGeometry(120, 120, 100, 100);
+  let ground = new T.PlaneGeometry(180, 180, 130, 130);
   ground.rotateX(-Math.PI / 2);
   let p = ground.attributes.position;
   for (let i = 0; i < p.count; i++) p.setY(i, height(p.getX(i), p.getZ(i)));
@@ -381,11 +386,14 @@ export function buildWorld(scene) {
       avoid ||
       road ||
       Math.hypot(x, z - 12) < 10 ||
+      Math.hypot(x + 10, z - 19) < 4.5 ||
       SUPPLIES.some((q) => Math.hypot(x - q.x, z - q.z) < 3)
     )
       continue;
-    treePositions.push([x, z, 4 + r() * 5]);
+    treePositions.push([x, z, 8 + r() * 7]);
   }
+  // Decorative far tree line closes the horizon beyond the playable boundary.
+  for(let i=0;i<65;i++) treePositions.push([-65+r()*130,-56-r()*20,10+r()*9]);
   const trunks = new T.InstancedMesh(
       new T.CylinderGeometry(0.35, 0.6, 1, 7),
       palette.bark,
@@ -495,12 +503,7 @@ export function buildWorld(scene) {
     );
     o.rotation.y = r() * 6;
     colliders.push({ x, z, r: s * 0.65 });
-    ell(
-      scene,
-      palette.leaves,
-      [x, height(x, z) + s * 0.63, z],
-      [s * 0.7, 0.12, s * 0.6],
-    );
+
   }
   function hut(x, z, scale = 1) {
     let g = new T.Group();
@@ -547,8 +550,7 @@ export function buildWorld(scene) {
     colliders.push({ x, z, r: 2.6 * scale });
     return g;
   }
-  hut(-6, 15, 1.15);
-  hut(-14, -11, 0.95);
+  const huts = [hut(-6, 15, 1.15), hut(-14, -11, 0.95)];
   for (let i = 0; i < 8; i++) {
     let puff = ell(
       scene,
@@ -564,72 +566,9 @@ export function buildWorld(scene) {
     puff.visible = false;
     smoke.push(puff);
   }
-  function banner(x, z) {
-    let y = height(x, z);
-    beam(scene, [x, y, z], [x, y + 4.3, z], 0.07, palette.wood);
-    beam(scene, [x - 0.1, y + 4.1, z], [x + 1.5, y + 4.1, z], 0.045);
-    let flag = mesh(
-      new T.PlaneGeometry(1.25, 1.9, 7, 7),
-      new T.MeshStandardMaterial({ color: "#286973", side: T.DoubleSide }),
-      scene,
-      [x + 0.68, y + 3.07, z],
-    );
-    boxAt(
-      scene,
-      palette.gold,
-      [x + 0.68, y + 3.08, z + 0.035],
-      [0.1, 0.6, 0.03],
-    );
-    boxAt(
-      scene,
-      palette.gold,
-      [x + 0.68, y + 3.15, z + 0.035],
-      [0.44, 0.09, 0.03],
-    );
-    props.push({ flag });
-  }
-  banner(-4, 9);
-  banner(6, 17);
-  let fire = new T.Group();
-  fire.position.set(2, height(2, 15), 15);
-  scene.add(fire);
-  for (let i = 0; i < 9; i++) {
-    let a = (i * Math.PI * 2) / 9;
-    ell(
-      fire,
-      palette.stone,
-      [Math.sin(a) * 0.6, 0.15, Math.cos(a) * 0.6],
-      [0.23, 0.16, 0.22],
-    );
-  }
-  for (let a of [0, 1, 2]) {
-    let log = beam(fire, [-0.5, 0.2, 0], [0.5, 0.2, 0], 0.12);
-    log.rotation.y = a;
-  }
-  for (let i = 0; i < 4; i++) {
-    let f = mesh(new T.ConeGeometry(0.2, 0.7, 6), palette.lamp, fire, [
-      (r() - 0.5) * 0.35,
-      0.55,
-      (r() - 0.5) * 0.35,
-    ]);
-    props.push({ flame: f });
-  }
-  let glow = new T.PointLight("#ffc47c", 6, 9);
-  glow.position.set(2, 1.4, 15);
-  scene.add(glow);
-  for (let x of [-8, -5, 1, 4, 7]) {
-    let z = 20,
-      y = height(x, z);
-    beam(scene, [x, y, z], [x, y + 1.2, z], 0.1);
-    if (x !== 7) {
-      beam(
-        scene,
-        [x, y + 0.9, z],
-        [x + 2.8, height(x + 2.8, z) + 0.9, z],
-        0.065,
-      );
-    }
-  }
+  installStructures(scene,props,palette,height);
+  // Preserve the environment generator's random sequence after replacing the old fire.
+  for(let i=0;i<8;i++) r();
   for (let x of [-3, 5]) {
     let z = 7,
       y = height(x, z);
@@ -662,7 +601,11 @@ export function buildWorld(scene) {
     ell(g, palette.gold, [0, 0.62, 0], [0.13, 0.055, 0.13]);
     return g;
   });
-  return { colliders, props, smoke, sacks, sun };
+  let surface=height;
+  const ready = installWatchcamp(scene, {floor, trees:treePositions, trunks, leaves, lightLeaves, huts, grass, flowers, palette, height, colliders}).then(()=>{
+    scene.updateMatrixWorld(true);const surfaces=[];scene.traverse(o=>{if(o.userData.walkSurface)surfaces.push(o)});surface=buildWalkSurface(surfaces,height);
+  });
+  return { colliders, props, smoke, sacks, sun, ready, groundHeight:(x,z)=>surface(x,z) };
 }
 export function bearSprite(texture, size = 1) {
   let tex = texture.clone();

@@ -1,4 +1,4 @@
-export const VERSION = "20260921-oathbound-2";
+export const VERSION = "20260922-oathguard-live-1";
 export const SAVE_KEY = "crownforge-oathbound-save-v1";
 export const ITEMS = {
   sword: {

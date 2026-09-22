@@ -26,7 +26,7 @@ Run `npm test` for rules, saves and navigation checks. Open the browser and comp
 
 ## Art and provenance
 
-The fighter, camp, bridge, terrain and forest are newly authored editable geometry in `src/world.js`; they are stylized first-playable assets. The bears reuse the user's original Crownforge grizzly atlas unchanged, displayed on vertical directional planes in the 3D world. They are not yet fully 3D rigged bears. The music `cavernous-wonder.mp3` is reused unchanged from Crownforge. Original Oathbound title artwork was generated for this project with the built-in image generation tool. No Blizzard artwork, names, music or code are used.
+The Oathguard is an original articulated Blender character with silver armor, blue cloth and shield, weathering, four combat moves and a Space-triggered leap. Authored camp buildings, waving blue-and-silver Crownwarden banners, foliage and terrain ship as local assets. The bears reuse the user's original Crownforge grizzly atlas unchanged, displayed on vertical directional planes in the 3D world. They are not yet fully 3D rigged bears. The music `cavernous-wonder.mp3` is reused unchanged from Crownforge. Original Oathbound title artwork was generated for this project with the built-in image generation tool. No Blizzard artwork, names, music or code are used.
 
 Versioned source and assets are also preserved on Toshiba under `Crownforge/Oathbound/v001`. The external drive is for production files; players load the published game from Render.
 

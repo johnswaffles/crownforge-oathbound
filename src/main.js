@@ -1,3 +1,5 @@
+import {startJump,advanceJump} from './jump-motion-v037.js';
+import {loadOathguard} from './oathguard-v037.js';
 import { findPath } from "./navigation.js";
 import {
   T,
@@ -47,7 +49,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = T.PCFSoftShadowMap;
 renderer.outputColorSpace = T.SRGBColorSpace;
 renderer.toneMapping = T.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMappingExposure = 1.18;
 const scene = new T.Scene(),
   camera = new T.PerspectiveCamera(48, innerWidth / innerHeight, 0.1, 150),
   world = buildWorld(scene);
@@ -62,9 +64,9 @@ let p = fresh(),
   target = null,
   auto = false,
   moveTo = null,
-  camYaw = 0,
-  camPitch = 0.4,
-  camDist = 11.5,
+  camYaw = 0.42,
+  camPitch = 0.29,
+  camDist = 9.5,
   time = 0,
   last = performance.now(),
   attackAnim = 0,
@@ -81,8 +83,7 @@ let p = fresh(),
   saveAt = 0,
   uiAt = 0,
   guide = false,
-  jump = 0,
-  jumpV = 0;
+  jump = 0;
 let route = [],
   routeKey = "",
   routeAt = 0;
@@ -92,8 +93,11 @@ const cds = {},
   npcMeshes = [],
   labels = [],
   sparks = [];
-const player = fighter();
+let player;
+try { player = await loadOathguard(); }
+catch(error){$("load-status").textContent="The Oathguard model could not load. Reload to retry.";throw error;}
 scene.add(player);
+player.userData.groundSurface=world.groundHeight;
 let selectedRing = new T.Mesh(
   new T.RingGeometry(1.2, 1.27, 48),
   new T.MeshBasicMaterial({
@@ -146,14 +150,15 @@ for (const n of npcMeshes)
   );
 let texture;
 try {
+  await world.ready;
   texture = await new T.TextureLoader().loadAsync(
     "assets/crownforge-grizzly-reference.png",
   );
   texture.colorSpace = T.SRGBColorSpace;
 } catch {
   $("load-status").textContent =
-    "Bear artwork could not load. Reload to try again.";
-  throw Error("Missing bear art");
+    "Preview assets could not load. Reload to try again.";
+  throw Error("Missing preview art");
 }
 const spawns = [
   [-9, -2],
@@ -1107,7 +1112,7 @@ window.addEventListener("keydown", (e) => {
   if (e.key.toLowerCase() === "c") character();
   if (e.key.toLowerCase() === "j") journal();
   if (e.key.toLowerCase() === "q") potion();
-  if (e.key === " " && jump === 0) jumpV = 5;
+  if (e.key === " ") startJump(player);
   let a = ABILITIES.find((a) => a.key === e.key);
   if (a) use(a.id);
 });
@@ -1271,9 +1276,7 @@ function tick(dt) {
       e.attack = Math.max(0, e.attack - dt);
     }
     attackAnim = Math.max(0, attackAnim - dt * 2.5);
-    jumpV -= dt * 12;
-    jump = Math.max(0, jump + jumpV * dt);
-    if (jump === 0) jumpV = 0;
+    jump = advanceJump(player,dt)?.height || 0;
     saveAt += dt;
     if (saveAt > 8) {
       saveAt = 0;
@@ -1281,7 +1284,10 @@ function tick(dt) {
     }
   }
   player.position.set(p.x, height(p.x, p.z) + jump, p.z);
-  player.rotation.y = p.yaw;
+  player.userData.groundAirOffset=jump;
+  // Ease visual facing through the shortest turn; gameplay facing remains authoritative.
+  const facingDelta = Math.atan2(Math.sin(p.yaw-player.rotation.y),Math.cos(p.yaw-player.rotation.y));
+  player.rotation.y += facingDelta * (1-Math.exp(-dt*12));
   animateFighter(
     player,
     time,
@@ -1365,6 +1371,7 @@ function tick(dt) {
     o.material.opacity = 0.22 * (1 - (o.position.y - 4) / 4);
   });
   world.props.forEach((o) => {
+    if(o.update)o.update(time,camera);
     if (o.flame)
       o.flame.scale.y = 0.8 + Math.sin(time * 9 + o.flame.position.x) * 0.2;
     if (o.flag) {
@@ -1390,6 +1397,7 @@ function tick(dt) {
       drawMap();
     }
   }
+  if(scene.userData.artWind)scene.userData.artWind.value=time;
   renderer.render(scene, camera);
 }
 function drawMap() {
