@@ -1,6 +1,6 @@
 import {shouldChainAutoAttack} from './idle-presence-v041.js';
 import {startJump,advanceJump} from './jump-motion-v037.js';
-import {loadOathguard} from './oathguard-v042.js';
+import {loadOathguard} from './oathguard-v043.js';
 import { findPath } from "./navigation.js";
 import {
   T,
@@ -12,7 +12,7 @@ import {
   height,
   LANDMARKS,
   SUPPLIES,
-} from "./world.js?v=20260927-v041";
+} from "./world.js?v=20260927-v043";
 import {
   VERSION,
   SAVE_KEY,

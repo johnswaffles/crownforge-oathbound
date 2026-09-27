@@ -1,0 +1,17 @@
+{
+  "width": 1.15,
+  "height": 0.88,
+  "headScale": 1.03,
+  "torsoLean": 10,
+  "shoulders": 4.76,
+  "armMovement": 0,
+  "armBend": 10.22,
+  "swordTilt": 0,
+  "capeMotion": 1.8,
+  "gaitRate": 1.26,
+  "shininess": 120,
+  "outline": 1,
+  "cloak": "#243e70",
+  "shield": "#254775",
+  "steel": "#8798a5"
+}
