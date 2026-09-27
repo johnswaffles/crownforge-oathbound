@@ -8,7 +8,7 @@ export function solveLeg(forward,down,upper=.425,lower=.425){
  const hip=Math.atan2(-forward,down)-Math.atan2(lower*Math.sin(knee),upper+lower*Math.cos(knee));
  return {hip,knee,ankle:-hip-knee,forward,down};
 }
-export function sampleLeg(phase,motion,drop){
+export function sampleLeg(phase,motion,drop,legLength=.425){
  const p=((phase%1)+1)%1,duty=.68-.12*motion,stride=.10+.24*motion;
  let forward,lift=0,rock=0;
  if(p<duty){
@@ -19,7 +19,7 @@ export function sampleLeg(phase,motion,drop){
   forward=stride*((2*t*t*t-3*t*t+1)*-1+(t*t*t-2*t*t+t)*slope+(-2*t*t*t+3*t*t)+(t*t*t-t*t)*slope);lift=(.065+.065*motion)*Math.sin(Math.PI*t)**2;
   rock=.19*(1-t)-.13*t-.12*Math.sin(Math.PI*t);
  }
- const leg=solveLeg(forward*motion,.85+drop-lift*motion);
+ const leg=solveLeg(forward*motion,legLength*2+drop-lift*motion,legLength,legLength);
  return {...leg,ankle:leg.ankle+rock*motion,lift:lift*motion,planted:p<duty};
 }
 // Shoulder, elbow, wrist and chest key poses: gather, wind-up, strike, follow-through, settle.

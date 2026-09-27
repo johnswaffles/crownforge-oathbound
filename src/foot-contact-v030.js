@@ -25,7 +25,7 @@ export function fitFeetToGround(model,d,legs,pose){
   for(const side of ['L','R']){
    if(legs[side].free)continue;
    const before=targets[side],adjust=clamp(correction(side),-.2,.3);
-   const next=solveLeg(before.forward,Math.max(.45,before.down-adjust));
+   const next=solveLeg(before.forward,Math.max(.45,before.down-adjust),d.legLength??.425,d.legLength??.425);
    const rock=legs[side].ankle+legs[side].hip+legs[side].knee;
    pose('thigh_'+side,next.hip,0,side==='L'?.008:-.008);pose('shin_'+side,next.knee);pose('foot_'+side,next.ankle+rock);
    targets[side]=next;

@@ -1,5 +1,5 @@
 import {startJump,advanceJump} from './jump-motion-v037.js';
-import {loadOathguard} from './oathguard-v037.js';
+import {loadOathguard} from './oathguard-v040.js';
 import { findPath } from "./navigation.js";
 import {
   T,
@@ -11,7 +11,7 @@ import {
   height,
   LANDMARKS,
   SUPPLIES,
-} from "./world.js";
+} from "./world.js?v=20260927-v040";
 import {
   VERSION,
   SAVE_KEY,
