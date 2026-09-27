@@ -1,6 +1,6 @@
 import * as T from '../vendor/three.module.js';
-import { bearSprite, animateBear } from '../src/world.js';
-import { loadArcadeBear, arcadeBearSprite, poseArcadeBear } from '../src/bear-arcade-v001.js';
+import * as previousBear from '../src/bear-arcade-v001.js';
+import { loadArcadeBear, arcadeBearSprite, poseArcadeBear } from '../src/bear-arcade-v002.js';
 import { BEAR_CLIPS, clipFrame, clipDuration } from '../src/bear-motion-v001.js';
 
 const $ = id => document.getElementById(id);
@@ -20,16 +20,15 @@ const floor = new T.Mesh(new T.PlaneGeometry(60, 60), new T.MeshStandardMaterial
 floor.rotation.x = -Math.PI / 2; scene.add(floor);
 const loader = new T.TextureLoader();
 try {
-  const [assets, oldTexture, ground] = await Promise.all([
+  const [assets, previousAssets, ground] = await Promise.all([
     loadArcadeBear(),
-    loader.loadAsync(new URL('../assets/crownforge-grizzly-reference.png', import.meta.url).href),
+    previousBear.loadArcadeBear(),
     loader.loadAsync(new URL('../assets/forest-floor-v001.png', import.meta.url).href),
   ]);
-  oldTexture.colorSpace = T.SRGBColorSpace;
   ground.colorSpace = T.SRGBColorSpace;
   ground.wrapS = ground.wrapT = T.RepeatWrapping; ground.repeat.set(12, 12);
   floor.material.map = ground; floor.material.needsUpdate = true;
-  const old = bearSprite(oldTexture), current = arcadeBearSprite(assets);
+  const old = previousBear.arcadeBearSprite(previousAssets), current = arcadeBearSprite(assets);
   scene.add(old, current);
   // Soft woodland silhouettes stay behind the viewing circle.
   const trunk = new T.MeshStandardMaterial({ color: '#283b2b' });
@@ -89,8 +88,7 @@ try {
     for (let i = 0; i < count; i++) {
       const model = compare && i === 0 ? old : current;
       if (model === old) {
-        old.userData.sprite.material.opacity = 1; old.userData.sprite.scale.set(3.35, 3.35, 1);
-        animateBear(old, time, action === 'run', .65, yaw, action === 'attack', action === 'death' && frame >= 17);
+        previousBear.poseArcadeBear(old, frame, .65, yaw);
       } else poseArcadeBear(current, frame, .65, yaw);
       model.visible = true;
       camera.aspect = width / count / height;

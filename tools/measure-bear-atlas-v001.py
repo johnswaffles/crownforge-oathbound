@@ -1,9 +1,15 @@
 """Measure the 20 separate painted poses. Writes metadata; never edits artwork."""
 import json
+import argparse
 from pathlib import Path
 from PIL import Image
 
-root = Path(__file__).resolve().parents[1] / 'assets/bear-arcade-v001'
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--directory', type=Path, default=Path(__file__).resolve().parents[1] / 'assets/bear-arcade-v001')
+parser.add_argument('--views', nargs='+', choices=['front', 'back'], default=['front', 'back'])
+parser.add_argument('--base-atlas', type=Path)
+args = parser.parse_args()
+root = args.directory
 
 def simplify(points, epsilon=.55):
     if len(points) < 3:
@@ -48,8 +54,8 @@ def outline(pixels, width, origin):
     loop = simplify(loop[:split+1])[:-1] + simplify(loop[split:] + loop[:1])[:-1]
     return [[x-origin[0], y-origin[1]] for x,y in loop]
 
-atlas = {}
-for name in ['front', 'back']:
+atlas = json.loads(args.base_atlas.read_text()) if args.base_atlas else {}
+for name in args.views:
     im = Image.open(root / f'{name}.png')
     w, h = im.size
     alpha = bytearray(im.getchannel('A').point(lambda p: 255 if p > 96 else 0).tobytes())
@@ -82,5 +88,5 @@ for name in ['front', 'back']:
     # Use one scale for the entire sheet; shorter collapse drawings stay shorter.
     idle_height = sum(frame[3] for frame in frames[:4]) / 4
     atlas[name] = dict(width=w, height=h, unitsPerPixel=2.65 / idle_height, frames=frames, outlines=[polygon for box, polygon in ordered])
-(root / 'atlas.json').write_text(json.dumps(atlas, indent=2) + '\n')
-print('Measured 40 poses without changing either image.')
+(root / 'atlas.json').write_text(json.dumps(atlas, separators=(',', ':')) + '\n')
+print(f'Measured {20 * len(args.views)} poses without changing any artwork.')

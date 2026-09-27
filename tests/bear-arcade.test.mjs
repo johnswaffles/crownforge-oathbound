@@ -38,8 +38,9 @@ test('front and rear directions mirror consistently as the camera orbits', () =>
   }
 });
 test('every animation drawing fits its source atlas and collapse retains its lower silhouette', () => {
-  const atlas = JSON.parse(fs.readFileSync(new URL('../assets/bear-arcade-v001/atlas.json', import.meta.url)));
-  for (const sheet of Object.values(atlas)) {
+  for (const version of ['v001', 'v002']) {
+   const atlas = JSON.parse(fs.readFileSync(new URL(`../assets/bear-arcade-${version}/atlas.json`, import.meta.url)));
+   for (const sheet of Object.values(atlas)) {
     assert.equal(sheet.frames.length, 20);
     for (const [x,y,w,h] of sheet.frames) {
       assert.ok(x >= 0 && y >= 0 && w > 0 && h > 0);
@@ -47,5 +48,18 @@ test('every animation drawing fits its source atlas and collapse retains its low
     }
     assert.ok(sheet.frames[19][3] < sheet.frames[0][3] * .7);
     for (const clip of Object.values(BEAR_CLIPS)) for (const frame of clip.frames) assert.ok(sheet.frames[frame]);
+    assert.equal(sheet.outlines.length, 20);
+    sheet.outlines.forEach((outline, frame) => {
+      const [, , width, height] = sheet.frames[frame];
+      assert.ok(outline.length >= 3);
+      for (const [x, y] of outline) assert.ok(x >= 0 && x <= width && y >= 0 && y <= height);
+    });
+   }
   }
+});
+test('rear correction preserves the approved front frame bounds, scale and silhouettes', () => {
+  const before = JSON.parse(fs.readFileSync(new URL('../assets/bear-arcade-v001/atlas.json', import.meta.url)));
+  const after = JSON.parse(fs.readFileSync(new URL('../assets/bear-arcade-v002/atlas.json', import.meta.url)));
+  assert.deepEqual(after.front, before.front);
+  assert.notDeepEqual(after.back, before.back);
 });

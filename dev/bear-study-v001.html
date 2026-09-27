@@ -1,23 +1,23 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Woodland Grizzly · Crownforge Workshop</title>
-<link rel="stylesheet" href="bear-study-v001.css"><script type="module" src="bear-study-v001.js"></script></head>
+<link rel="stylesheet" href="bear-study-v001.css"><script type="module" src="bear-study-v001.js?v=20260927-bear-v048"></script></head>
 <body>
-<header><a href="/">✦ <span>CROWNFORGE<small>CHARACTER WORKSHOP</small></span></a><span class="badge">LOCAL ART STUDY · 01</span></header>
+<header><a href="/">✦ <span>CROWNFORGE<small>CHARACTER WORKSHOP</small></span></a><span class="badge">REAR VIEW FIX · 02</span></header>
 <div class="layout"><aside>
 <p class="eyebrow">THE CREATURE WORKSHOP</p><h1>A little more<br>wild.</h1>
 <p class="intro">The Woodland Grizzly, brought to life one drawing at a time.</p>
-<label for="action">Animation</label><select id="action"><option value="run">Running lope</option><option value="idle">Breathing & idle</option><option value="attack">Claw strike</option><option value="hurt">Hit reaction</option><option value="death">Collapse</option></select>
-<label for="angle">Viewing angle <output id="angle-value">0°</output></label><input id="angle" type="range" min="0" max="359" step="1" value="0">
+<label for="action">Animation</label><select id="action"><option value="run">Running lope</option><option value="idle" selected>Breathing & idle</option><option value="attack">Claw strike</option><option value="hurt">Hit reaction</option><option value="death">Collapse</option></select>
+<label for="angle">Viewing angle <output id="angle-value">180°</output></label><input id="angle" type="range" min="0" max="359" step="1" value="180">
 <div class="pair"><button id="front">Front view</button><button id="back">Rear view</button></div>
 <label for="speed">Playback speed <output id="speed-value">1×</output></label><input id="speed" type="range" min=".25" max="1.5" step=".05" value="1">
 <div class="pair"><button id="pause">Pause</button><button id="step">Step frame →</button></div>
-<label class="check"><input type="checkbox" id="compare" checked> Compare with original</label>
+<label class="check"><input type="checkbox" id="compare" checked> Compare with previous</label>
 <div class="notes"><span class="eyebrow">THE NEW APPROACH</span><p>Planted paws. A rolling shoulder. A claw strike with weight behind it.</p><p>40 painted poses, four viewing directions, and timing you can inspect.</p></div>
 <a class="primary" href="../?bear=arcade-v001">Try the bear in the game ↗</a><p class="fine">Local experiment · separate test save.</p>
 </aside><main>
 <div class="title"><div><p class="eyebrow">CROWNFORGE: OATHBOUND</p><h2>Woodland Grizzly</h2></div><span class="tag">2D ARCADE STUDY</span></div>
-<div class="stage"><canvas id="stage" aria-label="Animated bear comparison"></canvas><div class="stage-labels"><span id="old-label">ORIGINAL <small>Current game artwork</small></span><span id="new-label">NEW STUDY <small>Painted frame animation</small></span></div><p id="loading" role="status">Preparing the grizzly…</p></div>
+<div class="stage"><canvas id="stage" aria-label="Animated bear comparison"></canvas><div class="stage-labels"><span id="old-label">PREVIOUS <small>Earlier rear anatomy</small></span><span id="new-label">CORRECTED <small>Rump, tail & grounded hind legs</small></span></div><p id="loading" role="status">Preparing the grizzly…</p></div>
 <div class="status"><span id="status" role="status">Loading artwork…</span><span>Hand-drawn frames · 3D woodland</span></div>
 <section class="frames"><div><span class="eyebrow">POSE BY POSE</span><p>Choose a drawing to pause and inspect it.</p></div><div id="frames" aria-label="Animation frames"></div></section>
 </main></div></body></html>

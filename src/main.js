@@ -1,7 +1,7 @@
 import {shouldChainAutoAttack} from './idle-presence-v041.js';
 import {startJump,advanceJump} from './jump-motion-v037.js';
 import {loadOathguard} from './oathguard-v046.js';
-import {loadArcadeBear, arcadeBearSprite as bearSprite, animateArcadeBear as animateBear} from './bear-arcade-v001.js';
+import {loadArcadeBear, arcadeBearSprite as bearSprite, animateArcadeBear as animateBear} from './bear-arcade-v002.js';
 import { findPath } from "./navigation.js";
 import {
   T,
