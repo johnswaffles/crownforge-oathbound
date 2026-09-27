@@ -5,12 +5,7 @@ import {readFileSync} from 'node:fs';
 import * as T from '../vendor/three.module.js';
 import {animateOathguard} from '../src/oathguard-v044.js';
 import {soleCorrection} from '../src/foot-contact-v030.js';
-function rig(){
- const bytes=readFileSync(new URL('../assets/oathguard-natural-hands-v044.glb',import.meta.url)),g=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)));
- const nodes=g.nodes.map(n=>{const o=new T.Object3D();o.name=n.name;if(n.translation)o.position.fromArray(n.translation);if(n.rotation)o.quaternion.fromArray(n.rotation);if(n.scale)o.scale.fromArray(n.scale);return o;});g.nodes.forEach((n,i)=>(n.children||[]).forEach(j=>nodes[i].add(nodes[j])));
- const model=new T.Group();g.scenes[g.scene||0].nodes.forEach(i=>model.add(nodes[i]));const bones={},rest={};for(const i of g.skins[0].joints){const b=nodes[i];bones[b.name]=b;rest[b.name]={q:b.quaternion.clone(),p:b.position.clone()};}
- model.userData.oathguard={bones,rest,natural:true,legLength:.5015,phase:0,lastTime:null,motion:0,guard:0,lastYaw:0,turn:0,attackElapsed:1,lastAttack:0,clothMotion:0,clothTurn:0};model.userData.groundSurface=()=>0;return model;
-}
+import {rig} from './oathguard-test-rig.mjs';
 test('run has a planted drive, heel recovery and two brief flight intervals',()=>{
  let flight=0,contact=0,maxLift=0;
  for(let i=0;i<1000;i++){const p=i/1000,drop=sampleRunBody(p,1).drop,a=sampleRunLeg(p,1,drop),b=sampleRunLeg(p+.5,1,drop);if(a.planted)contact++;if(a.lift>.001&&b.lift>.001)flight++;maxLift=Math.max(maxLift,a.lift);for(const key of ['hip','knee','ankle','forward','down'])assert.ok(Number.isFinite(a[key]));assert.ok(a.knee>=0&&a.knee<2.4);}
