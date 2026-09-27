@@ -1,21 +1,20 @@
 import {shouldChainAutoAttack} from './idle-presence-v041.js';
 import {startJump,advanceJump} from './jump-motion-v037.js';
 import {loadOathguard} from './oathguard-v046.js';
+import {loadArcadeBear, arcadeBearSprite as bearSprite, animateArcadeBear as animateBear} from './bear-arcade-v001.js';
 import { findPath } from "./navigation.js";
 import {
   T,
   buildWorld,
   fighter,
   animateFighter,
-  bearSprite,
-  animateBear,
   height,
   LANDMARKS,
   SUPPLIES,
 } from "./world.js?v=20260927-v046";
 import {
   VERSION,
-  SAVE_KEY,
+  SAVE_KEY as LIVE_SAVE_KEY,
   ITEMS,
   SLOTS,
   ABILITIES,
@@ -29,6 +28,9 @@ import {
   restore,
   weaponHit,
 } from "./rules.js";
+// Keep the workshop's test adventure separate; ordinary play retains its save key.
+const studySave = new URLSearchParams(location.search).get('bear') === 'arcade-v001';
+const SAVE_KEY = studySave ? `${LIVE_SAVE_KEY}-bear-study-v001` : LIVE_SAVE_KEY;
 const $ = (id) => document.getElementById(id),
   canvas = $("world");
 let renderer;
@@ -152,10 +154,7 @@ for (const n of npcMeshes)
 let texture;
 try {
   await world.ready;
-  texture = await new T.TextureLoader().loadAsync(
-    "assets/crownforge-grizzly-reference.png",
-  );
-  texture.colorSpace = T.SRGBColorSpace;
+  texture = await loadArcadeBear();
 } catch {
   $("load-status").textContent =
     "Preview assets could not load. Reload to try again.";
@@ -461,12 +460,6 @@ function locationReloadState(next) {
       e.x = e.homeX;
       e.z = e.homeZ;
       e.cast = 0;
-      e.model.userData.sprite.material.opacity = 1;
-      e.model.userData.sprite.scale.set(
-        3.35 * e.model.userData.size,
-        3.35 * e.model.userData.size,
-        1,
-      );
     }
   }
   world.sacks.forEach((m, i) => (m.visible = !p.supplies.includes(i)));
@@ -676,6 +669,7 @@ function hitEnemy(e, raw) {
   let critical = Math.random() < stats(p).crit,
     n = damage(raw, { armor: e.armor, level: p.level, crit: critical });
   e.hp -= n;
+  e.spriteHitAt = time;
   e.aggro = true;
   combatUntil = time + 5;
   float(n + (critical ? "!" : ""), e.x, e.z);
@@ -1214,8 +1208,6 @@ function tick(dt) {
           e.hp = e.maxHp;
           e.x = e.homeX;
           e.z = e.homeZ;
-          e.model.userData.sprite.material.opacity = 1;
-          e.model.userData.sprite.scale.set(3.35, 3.35, 1);
         }
         continue;
       }
@@ -1233,6 +1225,7 @@ function tick(dt) {
           if (e.cast > 0) {
             e.cast -= dt;
             if (e.cast <= 0) {
+              if (e.castType !== 'roar') e.spriteStrikeAt = time;
               if (e.castType === "roar") {
                 e.enraged = time + 8;
                 float("ENRAGED", e.x, e.z, "#ec986f");
@@ -1257,6 +1250,7 @@ function tick(dt) {
                 e,
               );
               e.attack = 0.5;
+              e.spriteStrikeAt = time;
             }
             if (distance < 5 && e.special <= 0) {
               e.castMax = e.boss ? 2.2 : 2;
@@ -1332,15 +1326,24 @@ function tick(dt) {
       continue;
     }
     e.model.position.set(e.x, height(e.x, e.z), e.z);
+    const bearMoving = Math.hypot(e.x - (e.lastVisualX ?? e.x), e.z - (e.lastVisualZ ?? e.z)) > .00001;
     animateBear(
       e.model,
       time,
-      e.aggro && dist(e) > 2.5 && !e.cast,
+      bearMoving,
       e.yaw,
       camYaw,
       e.attack > 0 || e.cast > 0,
       e.dead,
+      {
+        strikeAt: e.spriteStrikeAt,
+        hitAt: e.spriteHitAt,
+        cast: e.cast || (e.aggro && dist(e) < 3 && e.timer < .31 && e.stun <= time ? Math.max(0, e.timer) : 0),
+        castMax: e.cast ? e.castMax : .31,
+      },
     );
+    e.lastVisualX = e.x;
+    e.lastVisualZ = e.z;
     let q = new T.Vector3(
       e.x,
       height(e.x, e.z) + (e.boss ? 4.2 : 3.1),
