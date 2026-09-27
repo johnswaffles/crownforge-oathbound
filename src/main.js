@@ -1,5 +1,6 @@
+import {shouldChainAutoAttack} from './idle-presence-v041.js';
 import {startJump,advanceJump} from './jump-motion-v037.js';
-import {loadOathguard} from './oathguard-v040.js';
+import {loadOathguard} from './oathguard-v041.js';
 import { findPath } from "./navigation.js";
 import {
   T,
@@ -11,7 +12,7 @@ import {
   height,
   LANDMARKS,
   SUPPLIES,
-} from "./world.js?v=20260927-v040";
+} from "./world.js?v=20260927-v041";
 import {
   VERSION,
   SAVE_KEY,
@@ -1288,6 +1289,7 @@ function tick(dt) {
   // Ease visual facing through the shortest turn; gameplay facing remains authoritative.
   const facingDelta = Math.atan2(Math.sin(p.yaw-player.rotation.y),Math.cos(p.yaw-player.rotation.y));
   player.rotation.y += facingDelta * (1-Math.exp(-dt*12));
+  if(player.userData.oathguard)player.userData.oathguard.chainAttacks=shouldChainAutoAttack({auto,paused,dead,hasTarget:!!target,targetDead:target?.dead,distance:target?dist(target):Infinity,jumping:jump>0});
   animateFighter(
     player,
     time,
