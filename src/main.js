@@ -1,6 +1,6 @@
 import {shouldChainAutoAttack} from './idle-presence-v041.js';
 import {startJump,advanceJump} from './jump-motion-v037.js';
-import {loadOathguard} from './oathguard-v046.js';
+import {loadOathguard} from './oathguard-v051.js';
 import {loadArcadeBear, arcadeBearSprite as bearSprite, animateArcadeBear as animateBear} from './bear-arcade-v002.js';
 import { findPath } from "./navigation.js";
 import {
@@ -11,7 +11,7 @@ import {
   height,
   LANDMARKS,
   SUPPLIES,
-} from "./world.js?v=20260927-v046";
+} from "./world.js?v=20260928-v051";
 import {
   VERSION,
   SAVE_KEY as LIVE_SAVE_KEY,
@@ -1132,6 +1132,7 @@ $("minimap").onclick = (e) => {
   notify("Walking to the map marker. WASD cancels.");
 };
 function tick(dt) {
+  const previousX=p.x,previousZ=p.z;
   if (!paused && !dead) time += dt;
   let moving = 0,
     s = stats(p);
@@ -1284,6 +1285,8 @@ function tick(dt) {
   const facingDelta = Math.atan2(Math.sin(p.yaw-player.rotation.y),Math.cos(p.yaw-player.rotation.y));
   player.rotation.y += facingDelta * (1-Math.exp(-dt*12));
   if(player.userData.oathguard)player.userData.oathguard.chainAttacks=shouldChainAutoAttack({auto,paused,dead,hasTarget:!!target,targetDead:target?.dead,distance:target?dist(target):Infinity,jumping:jump>0});
+  // Use successful travel, so walls and paused gameplay cannot run in place.
+  player.userData.locomotionVelocity=started&&!paused&&!dead&&dt>0?Math.min(4.4,Math.hypot(p.x-previousX,p.z-previousZ)/dt):0;
   animateFighter(
     player,
     time,

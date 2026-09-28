@@ -1,0 +1,20 @@
+{
+  "name": "User approved run settings",
+  "approvedOn": "2026-09-28",
+  "source": "Read directly from the open Run Workshop sliders before any reset or reload",
+  "settings": {
+    "cadence": 1.98,
+    "compression": 0.065,
+    "drive": 1.35
+  },
+  "display": {
+    "stepRhythm": "1.98",
+    "landingSoftness": "100%",
+    "armDrive": "135%"
+  },
+  "motionSource": "dev/run-workshop-v049/motion.js",
+  "motionSha256": "34afe4b78852fdb7eb63497cf19b406681c6aca73a0e2a59d9a1c19338eb541c",
+  "appearanceSource": "src/oathguard-style-v046.js",
+  "modelAtApproval": "assets/oathguard-natural-hands-v044.glb",
+  "releaseStatus": "Run approved for upcoming integration. Fix and review hands first. No deployment authorized in this turn."
+}

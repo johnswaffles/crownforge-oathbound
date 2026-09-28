@@ -1,5 +1,5 @@
 import {buildWalkSurface} from './ground-surface.js';
-import {animateOathguard} from './oathguard-v046.js';
+import {animateOathguard} from './oathguard-v051.js';
 import {installStructures} from './structures-v003.js';
 import {installWatchcamp} from './art-pass.js';
 import * as T from "../vendor/three.module.js";
